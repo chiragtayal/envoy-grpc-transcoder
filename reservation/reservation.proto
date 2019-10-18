@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package reservations;
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+service ReservationService {
+
+	rpc CreateReservation(CreateReservationRequest) returns (Reservation) {
+		option(google.api.http) = {
+			post: "/reservations"
+			body: "reservation"
+		};
+	};
+	rpc DeleteReservation(DeleteReservationRequest) returns (google.protobuf.Empty) {
+		option(google.api.http) = {
+			delete: "/reservations/{id}"
+		};
+	};
+	rpc GetReservation(GetReservationRequest) returns (Reservation) {
+		option(google.api.http) = {
+			get: "/reservations/{id}"
+		};
+	};
+	rpc ListReservations(ListReservationRequest) returns (stream Reservation) {
+		option(google.api.http) = {
+			get: "/reservations"
+		};
+	};
+}
+
+message Reservation {
+	string id = 1;
+	string title = 2;
+	string venue = 3;
+	string room = 4;
+	string timestamp = 5;
+	repeated Person attendees = 6;
+}
+
+message Person {
+	string ssn = 1;
+	string firstName = 2;
+	string lastName = 3;
+}
+
+message CreateReservationRequest {
+	Reservation reservation = 2;
+}
+
+message DeleteReservationRequest {
+	string id = 1;
+}
+
+message GetReservationRequest {
+	string id = 1;
+}
+
+message ListReservationRequest {
+	string venue = 1;
+	string title = 2;
+	string room = 3;
+
+	Attendes attendes = 4;
+
+	message Attendes {
+		repeated string lastname = 1;
+	}
+}
+
