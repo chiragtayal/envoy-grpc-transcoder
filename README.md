@@ -1,8 +1,10 @@
 # envoy-grpc-transcoder
 
 Build descriptor file
-1. protoc -I$GOOGLEAPIS_DIR -I. --include_imports --include_source_info   --descriptor_set_out=proto.pb reservation/reservation.proto 
-2. protoc -I/usr/local/protoc/include -I. -I$GOPATH/src -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --go_out=plugins=grpc:. reservation.proto
+
+1. export GOOGLEAPIS_DIR=/Users/chiragtayal/docker/grpc/src/github.com/googleapis
+2. protoc -I$GOOGLEAPIS_DIR -I. --include_imports --include_source_info   --descriptor_set_out=proto.pb reservation/reservation.proto 
+3. protoc -I/usr/local/protoc/include -I. -I$GOPATH/src -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --go_out=plugins=grpc:. reservation.proto
 
 Run envoy in docker in host network
 
