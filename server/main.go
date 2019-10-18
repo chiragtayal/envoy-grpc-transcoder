@@ -2,29 +2,47 @@ package main
 
 import (
   "fmt"
-  reservations2 "github.com/docker/reservation/reservation"
-  "github.com/golang/protobuf/ptypes/empty"
   "log"
   "net"
-  "google.golang.org/grpc"
   "context"
+
+  reservations2 "github.com/docker/reservation/reservation"
+  "github.com/golang/protobuf/ptypes/empty"
+  "github.com/satori/go.uuid"
+  "google.golang.org/grpc"
 )
 
 type Server struct {}
 
+var cache map[string]reservations2.Reservation
+
 func (s Server) CreateReservation(ctx context.Context, req *reservations2.CreateReservationRequest) (*reservations2.Reservation, error) {
+  var err error
   fmt.Print("CreateReservation: %v", req)
-  return &reservations2.Reservation{}, nil
+  r := reservations2.Reservation{
+    Id: uuid.Must(uuid.NewV4(), err).String(),
+    Title: req.Reservation.Title,
+    Venue: req.Reservation.Venue,
+    Room: req.Reservation.Room,
+    Attendees: req.Reservation.Attendees,
+  }
+  cache[r.Id] = r
+
+  return &r, nil
 }
 
 func (s Server) DeleteReservation(ctx context.Context, req *reservations2.DeleteReservationRequest) (*empty.Empty, error) {
   fmt.Print("DeleteReservation: %v", req)
+  delete(cache, req.Id)
   return &empty.Empty{}, nil
 }
 
 func (s Server) GetReservation(ctx context.Context, req *reservations2.GetReservationRequest) (*reservations2.Reservation, error) {
   fmt.Print("GetReservation: %s", req)
-  return &reservations2.Reservation{}, nil
+  if v, ok := cache[req.Id]; ok {
+    return &v, nil
+  }
+  return nil, nil
 }
 
 func (s Server) ListReservations(req *reservations2.ListReservationRequest, resp reservations2.ReservationService_ListReservationsServer) error {
@@ -39,8 +57,9 @@ func main() {
   }
 
   grpcServer := grpc.NewServer()
-
   reservations2.RegisterReservationServiceServer(grpcServer, &Server{})
+
+  cache = make(map[string]reservations2.Reservation)
 
   fmt.Println("Starting GRPC server")
   if err := grpcServer.Serve(lis); err != nil {
