@@ -32,13 +32,13 @@ func (s Server) CreateReservation(ctx context.Context, req *reservations2.Create
 }
 
 func (s Server) DeleteReservation(ctx context.Context, req *reservations2.DeleteReservationRequest) (*empty.Empty, error) {
-	fmt.Print("DeleteReservation: %v", req)
+	fmt.Printf("DeleteReservation: %v", req)
 	delete(cache, req.Id)
 	return &empty.Empty{}, nil
 }
 
 func (s Server) GetReservation(ctx context.Context, req *reservations2.GetReservationRequest) (*reservations2.Reservation, error) {
-	fmt.Print("GetReservation: %s", req)
+	fmt.Printf("GetReservation: %s", req)
 	if v, ok := cache[req.Id]; ok {
 		return &v, nil
 	}
@@ -46,7 +46,7 @@ func (s Server) GetReservation(ctx context.Context, req *reservations2.GetReserv
 }
 
 func (s Server) ListReservations(req *reservations2.ListReservationRequest, resp reservations2.ReservationService_ListReservationsServer) error {
-	fmt.Print("ListReservations: %v", req)
+	fmt.Printf("ListReservations: %v", req)
 	return nil
 }
 
