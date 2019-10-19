@@ -1,6 +1,4 @@
-module github.com/docker/reservation
-
-go 1.12
+module github.com/chiragtayal/envoy-grpc-transcoder
 
 require (
 	github.com/golang/protobuf v1.3.2
